@@ -1,9 +1,13 @@
 - name: "Get all devices with no FS"
   shell: lsblk -o NAME,FSTYPE -dsn  | awk '$2 == "" {print $1}'
   register: devices
+  tags:
+    - sds_adddrives
 
 - debug:
     var: devices.stdout_lines
+  tags:
+    [ never, debug ]
 
 - name: "Get ScaleIO token for Auth"
   uri:
@@ -18,7 +22,9 @@
       - 200
       - 201
       - 202
-  register: msg
+  register: auth
+  tags:
+    - sds_adddrives
 
 - name: "Query SDS ID Number to Pass to Create Device"
   uri:
@@ -26,7 +32,7 @@
     /api/types/Sds/instances/action/queryIdByKey"
     method: POST
     user: "{{ vxflex_gateway_username }}"
-    password: "{{ msg.json }}"
+    password: "{{ auth.json }}"
     body: { "name": "{{ ansible_facts['nodename'] }}"}
     force_basic_auth: yes
     body_format: json
@@ -36,6 +42,8 @@
       - 201
       - 202
   register: sds_id_number
+  tags:
+    - sds_adddrives
 
 
 - name: "Query Protection ID to pass to Create Device"
@@ -44,7 +52,7 @@
     /api/types/ProtectionDomain/instances/action/queryIdByKey"
     method: POST
     user: "{{ vxflex_gateway_username }}"
-    password: "{{ msg.json }}"
+    password: "{{ auth.json }}"
     body: { "name": "{{ vxflex_protection_domain_name }}"}
     force_basic_auth: yes
     body_format: json
@@ -54,6 +62,8 @@
       - 201
       - 202
   register: protection_domain_id
+  tags:
+    - sds_adddrives
 
 - name: "Query Storage Pool ID to pass to Create Device"
   uri:
@@ -61,7 +71,7 @@
     /api/types/StoragePool/instances/action/queryIdByKey"
     method: POST
     user: "{{ vxflex_gateway_username }}"
-    password: "{{ msg.json }}"
+    password: "{{ auth.json }}"
     body: { "name": "{{ vxflex_storage_pool_name }}",
     "protectionDomainId": "{{ protection_domain_id.json }}"}
     force_basic_auth: yes
@@ -72,10 +82,14 @@
       - 201
       - 202
   register: storage_pool_id
+  tags:
+    - sds_adddrives
 
 - name: "Storage Pool ID"
   debug:
     var: storage_pool_id.json
+  tags:
+    - [ never, debug ]
 
 - name: "Add device to SDS servers"
   uri:
@@ -83,7 +97,7 @@
     /api/types/Device/instances"
     method: POST
     user: "{{ vxflex_gateway_username }}"
-    password: "{{ msg.json }}"
+    password: "{{ auth.json }}"
     body: {"sdsId":"{{ sds_id_number.json }}",
     "deviceCurrentPathname": "/dev/{{ item }}",
     "storagePoolId": "{{ storage_pool_id.json }}",
@@ -98,3 +112,5 @@
       - 202
       - 500
   with_items: "{{ devices.stdout_lines }}"
+  tags:
+    - sds_adddrives

@@ -7,7 +7,8 @@
 
 - name: "Get ScaleIO token for Auth"
   uri:
-    url: https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}/api/login
+    url: "https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}\
+    /api/login"
     return_content: yes
     user: "{{ vxflex_gateway_username }}"
     password: "{{ vxflex_gateway_pw }}"
@@ -21,7 +22,8 @@
 
 - name: "Query SDS ID Number to Pass to Create Device"
   uri:
-    url: https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}/api/types/Sds/instances/action/queryIdByKey
+    url: "https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}\
+    /api/types/Sds/instances/action/queryIdByKey"
     method: POST
     user: "{{ vxflex_gateway_username }}"
     password: "{{ msg.json }}"
@@ -38,7 +40,8 @@
 
 - name: "Query Protection ID to pass to Create Device"
   uri:
-    url: https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}/api/types/ProtectionDomain/instances/action/queryIdByKey
+    url: "https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}\
+    /api/types/ProtectionDomain/instances/action/queryIdByKey"
     method: POST
     user: "{{ vxflex_gateway_username }}"
     password: "{{ msg.json }}"
@@ -54,11 +57,13 @@
 
 - name: "Query Storage Pool ID to pass to Create Device"
   uri:
-    url: https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}/api/types/StoragePool/instances/action/queryIdByKey
+    url: "https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}\
+    /api/types/StoragePool/instances/action/queryIdByKey"
     method: POST
     user: "{{ vxflex_gateway_username }}"
     password: "{{ msg.json }}"
-    body: { "name": "{{ vxflex_storage_pool_name }}", "protectionDomainId": "{{ protection_domain_id.json }}"}
+    body: { "name": "{{ vxflex_storage_pool_name }}",
+    "protectionDomainId": "{{ protection_domain_id.json }}"}
     force_basic_auth: yes
     body_format: json
     validate_certs: False
@@ -74,11 +79,16 @@
 
 - name: "Add device to SDS servers"
   uri:
-    url: https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}/api/types/Device/instances
+    url: "https://{{ vxflex_gateway_ip }}:{{ vxflex_gateway_https_port }}\
+    /api/types/Device/instances"
     method: POST
     user: "{{ vxflex_gateway_username }}"
     password: "{{ msg.json }}"
-    body: {"sdsId":"{{ sds_id_number.json }}", "deviceCurrentPathname": "/dev/{{ item }}", "storagePoolId": "{{ storage_pool_id.json }}", "testMode": "noTest", "forceDeviceTakeover": "TRUE"}
+    body: {"sdsId":"{{ sds_id_number.json }}",
+    "deviceCurrentPathname": "/dev/{{ item }}",
+    "storagePoolId": "{{ storage_pool_id.json }}",
+    "testMode": "noTest",
+    "forceDeviceTakeover": "TRUE"}
     force_basic_auth: yes
     body_format: json
     validate_certs: False

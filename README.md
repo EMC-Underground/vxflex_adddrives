@@ -1,7 +1,7 @@
 Role Name
 =========
 
-Dynamically adds all available drives to vxFlex cluster
+Dynamically adds all available drives to vxFlex cluster.
 
 Requirements
 ------------

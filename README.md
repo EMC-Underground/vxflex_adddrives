@@ -1,7 +1,7 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Dynamically adds all available drives to vxFlex cluster
 
 Requirements
 ------------

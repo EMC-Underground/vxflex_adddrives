@@ -5,4 +5,4 @@ vxflex_protection_domain_name: pd1
 vxflex_gateway_username: admin
 vxflex_gateway_pw: Password#1
 vxflex_gateway_https_port: 443
-
+vxflex_media_type: "HDD"

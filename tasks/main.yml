@@ -102,7 +102,7 @@
     "deviceCurrentPathname": "/dev/{{ item }}",
     "storagePoolId": "{{ storage_pool_id.json }}",
     "testMode": "noTest",
-    "mediaType": "{{ media_type }}",
+    "mediaType": "{{ vxflex_media_type }}",
     "forceDeviceTakeover": "TRUE"}
     force_basic_auth: yes
     body_format: json
